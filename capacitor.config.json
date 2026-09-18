@@ -1,0 +1,9 @@
+{
+  "appId": "com.syntropydelta.agroai",
+  "appName": "AgroAI Suite Pro",
+  "webDir": "dist",
+  "bundledWebRuntime": false,
+  "server": {
+    "androidScheme": "https"
+  }
+}
