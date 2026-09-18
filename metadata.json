@@ -1,0 +1,6 @@
+{
+  "name": "AgroAI Suite Pro - Syntropy Delta Labs",
+  "description": "Suite agroindustrial avanzada con IA (Gemini), báscula, OCR multimodal, análisis de rendimiento y reportes en tiempo real.",
+  "requestFramePermissions": ["camera", "geolocation"],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
