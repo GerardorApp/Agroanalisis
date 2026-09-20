@@ -16,13 +16,13 @@ import {
 } from 'lucide-react';
 
 export const GitHubDeploymentModule: React.FC = () => {
-  const [repoUrl, setRepoUrl] = useState('https://github.com/USUARIO/agroai-suite-pro.git');
-  const [githubUser, setGithubUser] = useState('');
-  const [githubRepo, setGithubRepo] = useState('agroai-suite-pro');
+  const [repoUrl, setRepoUrl] = useState('https://github.com/GerardorApp/Agroanalisis.git');
+  const [githubUser, setGithubUser] = useState('GerardorApp');
+  const [githubRepo, setGithubRepo] = useState('Agroanalisis');
   const [copied, setCopied] = useState<string | null>(null);
 
   const cleanRepoUrl = githubUser.trim() 
-    ? `https://github.com/${githubUser.trim()}/${githubRepo.trim() || 'agroai-suite-pro'}.git`
+    ? `https://github.com/${githubUser.trim()}/${githubRepo.trim() || 'Agroanalisis'}.git`
     : repoUrl;
 
   const copyToClipboard = (text: string, label: string) => {
