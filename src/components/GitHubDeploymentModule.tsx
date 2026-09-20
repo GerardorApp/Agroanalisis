@@ -34,11 +34,15 @@ export const GitHubDeploymentModule: React.FC = () => {
   const gitPushScript = `# 1. Asegurar la rama principal
 git branch -M main
 
-# 2. Conectar tu repositorio remoto de GitHub (reemplaza con tu URL)
-git remote add origin ${cleanRepoUrl}
+# 2. Configurar o actualizar el repositorio remoto en GitHub
+git remote set-url origin ${cleanRepoUrl} 2>/dev/null || git remote add origin ${cleanRepoUrl}
 
-# 3. Enviar todo el código a GitHub
-git push -u origin main`;
+# 3. Incluir todos los archivos y proyecto Android
+git add .
+git commit -m "fix(ci): soporte completo para compilacion automatica de APK" || true
+
+# 4. Enviar todo el código y disparar la compilación del APK
+git push -u origin main --force`;
 
   return (
     <div className="space-y-6 pb-16">
