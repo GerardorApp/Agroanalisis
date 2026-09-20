@@ -8,7 +8,10 @@ import {
   Scale, 
   MessageSquareText, 
   ShieldCheck, 
-  AlertTriangle 
+  AlertTriangle,
+  Boxes,
+  GraduationCap,
+  Github
 } from 'lucide-react';
 
 interface NavbarProps {
@@ -16,6 +19,7 @@ interface NavbarProps {
   setActiveModule: (module: ActiveModule) => void;
   aiConfig: AIConfig;
   tickets: BenefitTicket[];
+  cestasSaldo?: number;
 }
 
 export const Navbar: React.FC<NavbarProps> = ({
@@ -23,41 +27,60 @@ export const Navbar: React.FC<NavbarProps> = ({
   setActiveModule,
   aiConfig,
   tickets,
+  cestasSaldo = 196,
 }) => {
   const isKeyConfigured = Boolean(aiConfig.apiKey && aiConfig.apiKey.trim().length > 5);
 
   const navItems: { id: ActiveModule; label: string; icon: React.ReactNode; badge?: number | string }[] = [
     { 
-      id: 'config', 
-      label: 'Config IA', 
-      icon: <Cpu className="w-5 h-5" />, 
-      badge: isKeyConfigured ? 'OK' : 'Falta Key' 
-    },
-    { 
       id: 'dashboard', 
       label: 'Dashboard & KPI', 
-      icon: <LayoutDashboard className="w-5 h-5" /> 
+      icon: <LayoutDashboard className="w-4 h-4" /> 
     },
     { 
-      id: 'capture', 
-      label: 'Captura OCR', 
-      icon: <Camera className="w-5 h-5" /> 
-    },
-    { 
-      id: 'importer', 
-      label: 'Importador', 
-      icon: <FileUp className="w-5 h-5" /> 
+      id: 'cestas', 
+      label: 'Cestas Maxipollos', 
+      icon: <Boxes className="w-4 h-4" />,
+      badge: `${cestasSaldo} disp.`
     },
     { 
       id: 'scale', 
       label: 'Báscula & Tierra', 
-      icon: <Scale className="w-5 h-5" />,
+      icon: <Scale className="w-4 h-4" />,
       badge: tickets.length
     },
     { 
+      id: 'capture', 
+      label: 'Captura OCR', 
+      icon: <Camera className="w-4 h-4" /> 
+    },
+    { 
+      id: 'importer', 
+      label: 'Importador', 
+      icon: <FileUp className="w-4 h-4" /> 
+    },
+    { 
+      id: 'didactic', 
+      label: 'Academia Didáctica', 
+      icon: <GraduationCap className="w-4 h-4" />,
+      badge: 'Guía'
+    },
+    { 
+      id: 'github', 
+      label: 'GitHub & APK', 
+      icon: <Github className="w-4 h-4" />,
+      badge: 'CI/CD'
+    },
+    { 
       id: 'chat', 
-      label: 'Chat IA & Reportes', 
-      icon: <MessageSquareText className="w-5 h-5" /> 
+      label: 'Chat IA', 
+      icon: <MessageSquareText className="w-4 h-4" /> 
+    },
+    { 
+      id: 'config', 
+      label: 'Config IA', 
+      icon: <Cpu className="w-4 h-4" />, 
+      badge: isKeyConfigured ? 'OK' : 'Falta Key' 
     },
   ];
 

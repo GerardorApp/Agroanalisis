@@ -1,22 +1,46 @@
 import { useState, useEffect } from 'react';
-import { ActiveModule, AIConfig, BenefitTicket } from './types';
-import { getStoredAIConfig, saveStoredAIConfig, getStoredTickets, saveStoredTickets } from './utils/storage';
+import { ActiveModule, AIConfig, BenefitTicket, CestaRecord, CestasInventoryConfig } from './types';
+import { 
+  getStoredAIConfig, 
+  saveStoredAIConfig, 
+  getStoredTickets, 
+  saveStoredTickets,
+  getStoredCestas,
+  saveStoredCestas,
+  getStoredCestasConfig,
+  saveStoredCestasConfig
+} from './utils/storage';
 import { Navbar } from './components/Navbar';
 import { AIConfigModule } from './components/AIConfigModule';
 import { DashboardModule } from './components/DashboardModule';
+import { CestasMaxipollosModule } from './components/CestasMaxipollosModule';
 import { IntelligentCaptureModule } from './components/IntelligentCaptureModule';
 import { DocumentImporterModule } from './components/DocumentImporterModule';
 import { ScaleFormModule } from './components/ScaleFormModule';
+import { DidacticGuideModule } from './components/DidacticGuideModule';
+import { GitHubDeploymentModule } from './components/GitHubDeploymentModule';
 import { AIChatReportModule } from './components/AIChatReportModule';
 
 export default function App() {
-  const [activeModule, setActiveModule] = useState<ActiveModule>('dashboard');
+  const [activeModule, setActiveModule] = useState<ActiveModule>('cestas');
   const [aiConfig, setAiConfig] = useState<AIConfig>({ apiKey: '', model: 'gemini-2.5-flash' });
   const [tickets, setTickets] = useState<BenefitTicket[]>([]);
+  const [cestasRecords, setCestasRecords] = useState<CestaRecord[]>([]);
+  const [cestasConfig, setCestasConfig] = useState<CestasInventoryConfig>({
+    titulo: 'Cestas Maxipollos',
+    subtitulo: 'Inv. General: Saldo anterior',
+    fechaInicial: '11/9/26',
+    saldoInicial: 16,
+    conteoPatioBase: 1456,
+    actualizadoPatio: 1503,
+    alertaStockMinimo: 100,
+  });
 
   useEffect(() => {
     setAiConfig(getStoredAIConfig());
     setTickets(getStoredTickets());
+    setCestasRecords(getStoredCestas());
+    setCestasConfig(getStoredCestasConfig());
   }, []);
 
   const handleSaveAIConfig = (newConfig: AIConfig) => {
@@ -42,6 +66,20 @@ export default function App() {
     saveStoredTickets(updated);
   };
 
+  const handleUpdateCestasRecords = (updated: CestaRecord[]) => {
+    setCestasRecords(updated);
+    saveStoredCestas(updated);
+  };
+
+  const handleUpdateCestasConfig = (updated: CestasInventoryConfig) => {
+    setCestasConfig(updated);
+    saveStoredCestasConfig(updated);
+  };
+
+  const currentCestasSaldo = cestasRecords.length > 0 
+    ? cestasRecords[cestasRecords.length - 1].saldo 
+    : cestasConfig.saldoInicial;
+
   return (
     <div className="min-h-screen bg-slate-100 text-slate-900 font-sans selection:bg-emerald-500 selection:text-white">
       <Navbar
@@ -49,13 +87,18 @@ export default function App() {
         setActiveModule={setActiveModule}
         aiConfig={aiConfig}
         tickets={tickets}
+        cestasSaldo={currentCestasSaldo}
       />
 
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-8">
-        {activeModule === 'config' && (
-          <AIConfigModule
+        {activeModule === 'cestas' && (
+          <CestasMaxipollosModule
+            records={cestasRecords}
+            config={cestasConfig}
             aiConfig={aiConfig}
-            onSaveConfig={handleSaveAIConfig}
+            onUpdateRecords={handleUpdateCestasRecords}
+            onUpdateConfig={handleUpdateCestasConfig}
+            onNavigateToCapture={() => setActiveModule('capture')}
           />
         )}
 
@@ -63,6 +106,22 @@ export default function App() {
           <DashboardModule
             tickets={tickets}
           />
+        )}
+
+        {activeModule === 'scale' && (
+          <ScaleFormModule
+            tickets={tickets}
+            onAddTicket={handleAddTicket}
+            onDeleteTicket={handleDeleteTicket}
+          />
+        )}
+
+        {activeModule === 'didactic' && (
+          <DidacticGuideModule />
+        )}
+
+        {activeModule === 'github' && (
+          <GitHubDeploymentModule />
         )}
 
         {activeModule === 'capture' && (
@@ -80,21 +139,21 @@ export default function App() {
           />
         )}
 
-        {activeModule === 'scale' && (
-          <ScaleFormModule
-            tickets={tickets}
-            onAddTicket={handleAddTicket}
-            onDeleteTicket={handleDeleteTicket}
-          />
-        )}
-
         {activeModule === 'chat' && (
           <AIChatReportModule
             aiConfig={aiConfig}
             tickets={tickets}
           />
         )}
+
+        {activeModule === 'config' && (
+          <AIConfigModule
+            aiConfig={aiConfig}
+            onSaveConfig={handleSaveAIConfig}
+          />
+        )}
       </main>
     </div>
   );
 }
+

@@ -52,4 +52,27 @@ export interface ChatMessage {
   timestamp: string;
 }
 
-export type ActiveModule = 'config' | 'dashboard' | 'capture' | 'importer' | 'scale' | 'chat';
+export interface CestaRecord {
+  id: string;
+  fecha: string; // Formato DD/MM/AAAA o DD/MM/AA
+  entrada: number;
+  salida: number;
+  enCava: number;
+  saldo: number;
+  observaciones: string;
+  esSaldoInicial?: boolean;
+  createdAt?: number;
+}
+
+export interface CestasInventoryConfig {
+  titulo: string;
+  subtitulo: string;
+  fechaInicial: string;
+  saldoInicial: number;
+  conteoPatioBase: number;
+  actualizadoPatio: number;
+  alertaStockMinimo: number;
+}
+
+export type ActiveModule = 'dashboard' | 'cestas' | 'scale' | 'capture' | 'importer' | 'didactic' | 'github' | 'chat' | 'config';
+

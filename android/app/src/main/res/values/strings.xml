@@ -1,0 +1,7 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+    <string name="app_name">AgroAI Suite Pro</string>
+    <string name="title_activity_main">AgroAI Suite Pro</string>
+    <string name="package_name">com.syntropydelta.agroai</string>
+    <string name="custom_url_scheme">com.syntropydelta.agroai</string>
+</resources>

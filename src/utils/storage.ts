@@ -1,9 +1,137 @@
-import { BenefitTicket, AIConfig } from '../types';
+import { BenefitTicket, AIConfig, CestaRecord, CestasInventoryConfig } from '../types';
 
 const STORAGE_KEYS = {
   TICKETS: 'agroai_tickets_v1',
   AI_CONFIG: 'agroai_config_v1',
+  CESTAS_RECORDS: 'agroai_cestas_records_v1',
+  CESTAS_CONFIG: 'agroai_cestas_config_v1',
 };
+
+export const INITIAL_CESTAS_CONFIG: CestasInventoryConfig = {
+  titulo: 'Cestas Maxipollos',
+  subtitulo: 'Inv. General: Saldo anterior',
+  fechaInicial: '11/9/26',
+  saldoInicial: 16,
+  conteoPatioBase: 1456,
+  actualizadoPatio: 1503, // 1456 + 47
+  alertaStockMinimo: 100,
+};
+
+export const INITIAL_CESTAS_RECORDS: CestaRecord[] = [
+  {
+    id: 'CESTA-INIT-00',
+    fecha: 'Saldo Agosto 26',
+    entrada: 0,
+    salida: 0,
+    enCava: 0,
+    saldo: 16,
+    observaciones: 'Saldo Inicial Disponible (16 Disp. al 11/9/26)',
+    esSaldoInicial: true,
+    createdAt: 1726000000000,
+  },
+  {
+    id: 'CESTA-REC-01',
+    fecha: '14/9/26',
+    entrada: 393,
+    salida: 47,
+    enCava: 0,
+    saldo: 362, // 16 + 393 - 47 = 362
+    observaciones: '47 botes a patio (Act. Patio: 1456 + 47 = 1503)',
+    createdAt: 1726300000000,
+  },
+  {
+    id: 'CESTA-REC-02',
+    fecha: '15/9/26',
+    entrada: 213,
+    salida: 374,
+    enCava: 0,
+    saldo: 201, // 362 + 213 - 374 = 201
+    observaciones: 'Despacho comercial de producto',
+    createdAt: 1726386400000,
+  },
+  {
+    id: 'CESTA-REC-03',
+    fecha: '16/9/26',
+    entrada: 146,
+    salida: 219,
+    enCava: 0,
+    saldo: 128, // 201 + 146 - 219 = 128
+    observaciones: 'Turno matutino de distribución',
+    createdAt: 1726472800000,
+  },
+  {
+    id: 'CESTA-REC-04',
+    fecha: '16/9/26',
+    entrada: 430,
+    salida: 357,
+    enCava: 0,
+    saldo: 201, // 128 + 430 - 357 = 201
+    observaciones: 'Recepción de jaulas de granja y rotación planta',
+    createdAt: 1726472850000,
+  },
+  {
+    id: 'CESTA-REC-05',
+    fecha: '16/9/26',
+    entrada: 0,
+    salida: 5,
+    enCava: 0,
+    saldo: 196, // 201 - 5 = 196
+    observaciones: '* -5 rotulados * (desincorporación por rotura/daño)',
+    createdAt: 1726472900000,
+  },
+];
+
+export function recalculateCestasSaldos(records: CestaRecord[], saldoBase: number = 16): CestaRecord[] {
+  let runningSaldo = saldoBase;
+  return records.map((record) => {
+    if (record.esSaldoInicial) {
+      runningSaldo = record.saldo;
+      return record;
+    }
+    const entrada = Number(record.entrada) || 0;
+    const salida = Number(record.salida) || 0;
+    runningSaldo = runningSaldo + entrada - salida;
+    return {
+      ...record,
+      saldo: runningSaldo,
+    };
+  });
+}
+
+export function getStoredCestas(): CestaRecord[] {
+  try {
+    const raw = localStorage.getItem(STORAGE_KEYS.CESTAS_RECORDS);
+    if (!raw) {
+      localStorage.setItem(STORAGE_KEYS.CESTAS_RECORDS, JSON.stringify(INITIAL_CESTAS_RECORDS));
+      return INITIAL_CESTAS_RECORDS;
+    }
+    return JSON.parse(raw);
+  } catch {
+    return INITIAL_CESTAS_RECORDS;
+  }
+}
+
+export function saveStoredCestas(records: CestaRecord[]): void {
+  localStorage.setItem(STORAGE_KEYS.CESTAS_RECORDS, JSON.stringify(records));
+}
+
+export function getStoredCestasConfig(): CestasInventoryConfig {
+  try {
+    const raw = localStorage.getItem(STORAGE_KEYS.CESTAS_CONFIG);
+    if (!raw) {
+      localStorage.setItem(STORAGE_KEYS.CESTAS_CONFIG, JSON.stringify(INITIAL_CESTAS_CONFIG));
+      return INITIAL_CESTAS_CONFIG;
+    }
+    return JSON.parse(raw);
+  } catch {
+    return INITIAL_CESTAS_CONFIG;
+  }
+}
+
+export function saveStoredCestasConfig(config: CestasInventoryConfig): void {
+  localStorage.setItem(STORAGE_KEYS.CESTAS_CONFIG, JSON.stringify(config));
+}
+
 
 export const INITIAL_TICKETS: BenefitTicket[] = [
   {

@@ -208,3 +208,69 @@ Responde de manera profesional, técnica, concisa y estructurada en Markdown (co
     return `Error al consultar la IA: ${error?.message || 'Verifique su API Key o conexión a internet.'}`;
   }
 }
+
+export interface ExtractedCestaRow {
+  fecha: string;
+  entrada: number;
+  salida: number;
+  enCava: number;
+  saldo: number;
+  observaciones: string;
+}
+
+export async function extractCestasFromImage(
+  apiKey: string,
+  model: string,
+  imageBase64: string,
+  mimeType: string = 'image/jpeg'
+): Promise<ExtractedCestaRow[]> {
+  if (!apiKey) {
+    throw new Error('API Key no configurada.');
+  }
+
+  const ai = new GoogleGenAI({ apiKey });
+
+  const prompt = `
+Analiza esta imagen que contiene un libro de control o planilla física titulada "Cestas Maxipollos - Inv. General: Saldo anterior" u similar.
+Extrae todas las filas de la tabla manuscrita o impresa en formato JSON con la siguiente estructura (un arreglo de objetos JSON):
+[
+  {
+    "fecha": "ej. 14/9/26",
+    "entrada": número o 0,
+    "salida": número o 0,
+    "enCava": número o 0,
+    "saldo": número calculado o leído,
+    "observaciones": "texto manuscrito o anotación, ej. 47 botes a patio, -5 rotulados"
+  }
+]
+Responde ÚNICAMENTE con el bloque JSON plano (sin markdown \`\`\`json).
+`;
+
+  try {
+    const response = await ai.models.generateContent({
+      model: model || 'gemini-2.5-flash',
+      contents: [
+        {
+          role: 'user',
+          parts: [
+            { text: prompt },
+            {
+              inlineData: {
+                data: imageBase64,
+                mimeType: mimeType,
+              },
+            },
+          ],
+        },
+      ],
+    });
+
+    const responseText = response.text || '';
+    const cleanJson = responseText.replace(/```json/g, '').replace(/```/g, '').trim();
+    return JSON.parse(cleanJson);
+  } catch (err) {
+    console.error('OCR Cestas Error:', err);
+    return [];
+  }
+}
+
