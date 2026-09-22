@@ -47,6 +47,10 @@ jobs:
       - name: Sync Capacitor Android
         run: |
           npx cap sync android
+          if [ -f "android/variables.gradle" ]; then
+            sed -i 's/compileSdkVersion = [0-9]*/compileSdkVersion = 36/g' android/variables.gradle
+            sed -i 's/targetSdkVersion = [0-9]*/targetSdkVersion = 36/g' android/variables.gradle
+          fi
           chmod +x android/gradlew || true
 
       - name: Build Android Debug APK
