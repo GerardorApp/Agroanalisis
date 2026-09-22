@@ -1,8 +1,8 @@
 apply plugin: 'com.android.application'
 
 android {
-    namespace = "com.syntropydelta.agroai"
-    compileSdk = rootProject.ext.compileSdkVersion
+    namespace "com.syntropydelta.agroai"
+    compileSdk rootProject.ext.compileSdkVersion
     defaultConfig {
         applicationId "com.syntropydelta.agroai"
         minSdkVersion rootProject.ext.minSdkVersion
@@ -16,15 +16,15 @@ android {
             ignoreAssetsPattern = '!.svn:!.git:!.ds_store:!*.scc:.*:!CVS:!thumbs.db:!picasa.ini:!*~'
         }
     }
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_21
+        targetCompatibility JavaVersion.VERSION_21
+    }
     buildTypes {
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
-    }
-    compileOptions {
-        sourceCompatibility JavaVersion.VERSION_21
-        targetCompatibility JavaVersion.VERSION_21
     }
 }
 
